@@ -1,0 +1,21 @@
+Opis projektu:
+
+Prosty projekt "serwer HTTP" to aplikacja napisana w języku programowania, która działa jako podstawowy serwer obsługujący protokół HTTP (Hypertext Transfer Protocol). Celem tego projektu jest umożliwienie przeglądarkom internetowym lub innym klientom komunikację z serwerem poprzez żądania HTTP, takie jak pobieranie plików lub przesyłanie danych.
+
+Interfejs projektu jest minimalistyczny i skupia się na podstawowych funkcjach serwera HTTP, takich jak uruchamianie, zatrzymywanie i monitorowanie jego działania.
+
+Interfejs projektu "serwer HTTP":
+
+    Uruchomienie serwera:
+        [Start] [Stop]
+
+    Monitorowanie serwera:
+        Aktywne połączenia: [______]
+        Ilość żądań obsłużonych: [______]
+
+    Logi serwera:
+        Logi dostępu
+        Logi błędów
+
+    Informacje o serwerze:
+        Wersja serwera: [______]
