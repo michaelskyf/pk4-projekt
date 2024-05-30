@@ -1,5 +1,6 @@
 #include "TcpAcceptor.hpp"
 #include <boost/asio/use_awaitable.hpp>
+#include <iostream>
 
 using namespace Server::Network::Tcp;
 
@@ -11,6 +12,7 @@ auto TcpAcceptor::create(asio::any_io_executor& ctx, CallbackType callback, std:
             auto endpoint = queryResult->endpoint();
             auto acceptor = asio::ip::tcp::acceptor(ctx, endpoint);
 
+            std::cout << "Created acceptor at " << host << ':' << service << std::endl;
             return TcpAcceptor(ctx, callback, std::move(acceptor));
         } catch(const std::runtime_error& err) {
             return Err(err.what());

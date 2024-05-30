@@ -20,6 +20,8 @@
 #include <argparse/argparse.hpp>
 #include <boost/thread.hpp>
 
+using namespace std::literals;
+
 constexpr auto SERVER_VERSION = "1.0";
 
 using namespace Server;
@@ -138,6 +140,8 @@ auto handle_client_wrapper(const HttpServer& httpServer, T streamImpl) -> Task<v
 
 struct ServerArgs {
     std::filesystem::directory_entry directory;
+    std::string host;
+    std::string service;
 };
 
 ServerArgs parse_args(int argc, char *argv[]) {
@@ -146,12 +150,22 @@ ServerArgs parse_args(int argc, char *argv[]) {
 	ServerArgs result;
 
 	parser.add_argument("--path", "-p")
-		.default_value(std::filesystem::current_path())
+		.default_value(std::filesystem::current_path().string())
 		.help("specify the http root path");
+
+    parser.add_argument("--host", "-h")
+		.default_value("127.0.0.1"s)
+		.help("specify address to use");
+
+    parser.add_argument("--service", "-s")
+		.default_value("8080"s)
+		.help("specify port");
 
 	parser.parse_args(argc, argv);
 
-	result.directory = std::filesystem::directory_entry(parser.get("path"));
+	result.directory = std::filesystem::directory_entry(parser.get("--path"));
+    result.host = parser.get("--host");
+    result.service = parser.get("--service");
 
     return result;
 }
@@ -166,7 +180,7 @@ int main(int argc, char *argv[]) {
     auto executor = asio::any_io_executor(ctx.get_executor());
     
     auto tcpTask = std::bind(handle_client_wrapper<Tcp::TcpStream>, httpServer, std::placeholders::_1);
-    auto tcpAcceptorResult = Tcp::TcpAcceptor::create(executor, tcpTask, "0.0.0.0", "8080");
+    auto tcpAcceptorResult = Tcp::TcpAcceptor::create(executor, tcpTask, serverArgs.host, serverArgs.service);
     auto& tcpAcceptor = tcpAcceptorResult.value();
 
     co_spawn(ctx, tcpAcceptor.accept(), detached);
